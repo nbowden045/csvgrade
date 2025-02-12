@@ -5,3 +5,11 @@
 - Gradebook should be compatible csv with the myphysics platform 
 - folder import of submissions
 - assignments imported
+
+## Installation
+
+Can be installed after cloning the repo using
+`pip install <clone dir>`
+
+## Developers
+You can install the package as editable using the `-e` flag in pip

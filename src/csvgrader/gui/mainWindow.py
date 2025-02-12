@@ -1,19 +1,8 @@
-# Main.py
 from tkinter import *
 from tkinter import ttk, filedialog
 import os
 import pandas as pd
 import webbrowser
-import json
-
-filepath = "/home/auttieb/Documents/college/TA/211LSP25/120251-PHYS-211-labs-1.csv"
-submitpath = "/home/auttieb/Documents/college/TA/211LSP25/submissions/lab1/L3E"
-
-pd.options.mode.copy_on_write = True
-
-rubric = {"1":{"1_1":"fail", "2_1":"ish", "3_1":"pass"}, "2":{"1_3":"fail", "2_2":"ish", "3_2":"pass"}}
-
-
 
 class MainWindow:
 
@@ -220,7 +209,7 @@ class Grader:
             return
         for netid in self.submitList.keys():
             try:
-                print(f"NetID: {netid}, Name: {self.gradebook.loc[self.gradebook["Student NetID"] == netid,"Student First Name"].values[0]}")
+                print(f"NetID: {netid}, Name: {self.gradebook.loc[self.gradebook['Student NetID'] == netid,'Student First Name'].values[0]}")
             except:
                 print(f"NetID {netid} not in gradebook, skipping...")
                 continue
@@ -244,9 +233,3 @@ class Grader:
     
     def exportGrades(self):
         self.gradebook.to_csv(str(self.gradebookPath[:-4]+"mod.csv"))
-
-
-
-mw = MainWindow()
-mw.run()
-
