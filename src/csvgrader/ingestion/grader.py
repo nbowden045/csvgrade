@@ -2,7 +2,7 @@ import json
 import os
 import os.path as osp
 
-from common import ClassDef, GradeClass
+from csvgrader.dataforms.teams import ClassDef, GradeClass
 
 def renameFile(invTeams: dict, dir: str, newFormat = "{team}_{netId}_{data}"):
     files = os.listdir(dir)
