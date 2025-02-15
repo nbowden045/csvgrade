@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk, filedialog
 import os
 import webbrowser
+from dataforms.teams import Groups
 
 import pandas as pd
 
@@ -16,6 +17,7 @@ class MainWindow:
         self.assignmentsLoaded = True
 
         self.studentGrade = {}
+        self.groups = Groups()
 
 
         self.root = Tk()
@@ -76,14 +78,16 @@ class MainWindow:
         ttk.Label(text="Group Import")
         self.groups_path = StringVar(value=os.getcwd())
         ttk.Entry(tab, textvariable=self.submission_path, width=50).grid(row=4, column=0)
-        ttk.Button(tab, text="Open Directory", command=lambda: self.getPaths(self.groups_path, mode="csv")).grid(column=1, row=4)
-        ttk.Button(tab, text="Load Assignments", command=self.importGroups).grid(column=0, row=5)
+        ttk.Button(tab, text="Open CSV File", command=lambda: self.getPaths(self.groups_path, mode="csv")).grid(column=1, row=4)
+        ttk.Button(tab, text="Load Groups", command=self.importGroups).grid(column=0, row=5)
+
 
         ttk.Button(tab, text="Start Grading", command=self.enableGrading).grid(column=1, row=6)
 
         
 
     def gradeTab(self, tab:ttk.Frame):
+
         # Going to be a grid of frames here!
         self.rubricFrame = ttk.Labelframe(tab, text="rubric")
         self.rubricFrame.grid(row=0, column=0, sticky="w")
@@ -102,22 +106,43 @@ class MainWindow:
         self.groupFrame.grid_rowconfigure(0, weight=1)
         self.groupFrame.grid_columnconfigure(0,weight=1)
 
+        self.groupTree = ttk.Treeview(self.groupFrame)
+
+        self.genGroupTree(self.groupTree)
+
+        self.groupTree.grid(row=0, column=0, rowspan=4, sticky="w")
+        
+        ttk.Button(self.groupFrame, text="Assign to Selected", command=).grid(row=3, column=0)
+        ttk.Button(self.groupFrame, text="Assign to New").grid(row=4, column=0)
 
         ttk.Label(self.infoFrame, text="test").grid(column=0, row=0, sticky="w")
         ttk.Label(self.groupFrame, text="this").grid(column=0, row=0)
 
 
         
-    def displayRubric(self, contain):
+    def displayRubric(self, root):
         # Create UI elements
         # Thanks chatGPT!
         for col, (outer_key, inner_dict) in enumerate(self.rubric.items()):
-            ttk.Label(contain, text=f"{outer_key}:").grid(row=0, column=col, sticky="w")
+            ttk.Label(root, text=f"{outer_key}:").grid(row=0, column=col, sticky="w")
             # Variable to store selected option for this category
             self.studentGrade[outer_key] = StringVar(value="")
             for row, (inner_key, value) in enumerate(inner_dict.items(), start=1):
                 rb = ttk.Radiobutton(contain, text=value, variable=self.studentGrade[outer_key], value=inner_key)
                 rb.grid(row=row, column=col, sticky="w")
+
+    def displayGroupTree(self, root:ttk.Treeview):
+        pass
+
+    def assignToGroup(self, groupID:int, netID:str):
+        self.groups.addStudent(groupID, netID)
+
+    def assignToNew(self, netID:str):
+        self.groups.addGroup(students=[netID])
+
+    
+        
+
                         
 
 
@@ -140,11 +165,13 @@ class MainWindow:
         pass
 
     def importGroups(self):
-        pass
+        self.groups = Groups(self.groups_path)
 
     def enableGrading(self):
         if self.gbLoad and self.assignmentsLoaded:
             self.gradeTab(self.grade)
             self.tabs.tab(1,state="normal")
+
+
             print("setState")
 
