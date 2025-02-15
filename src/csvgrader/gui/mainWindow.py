@@ -140,7 +140,7 @@ class MainWindow:
     def assignToNew(self, netID:str):
         self.groups.addGroup(students=[netID])
 
-    
+
         
 
                         
