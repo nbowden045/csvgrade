@@ -11,5 +11,7 @@
 Can be installed after cloning the repo using
 `pip install <clone dir>`
 
+Please note that this requires python >3.7 and has not been tested on less than 3.13!
+
 ## Developers
 You can install the package as editable using the `-e` flag in pip

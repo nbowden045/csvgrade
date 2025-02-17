@@ -1,16 +1,26 @@
 import json
 import csv
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 import os.path as osp
 
 @dataclass
 class Groups:
+    """Groups object. Stores 
+
+    Raises:
+        RuntimeError: _description_
+        RuntimeError: _description_
+        RuntimeError: _description_
+
+    Returns:
+        _type_: _description_
+    """
 
     groupPath:str = None
-    _studentList:dict[str, int] = {}
-    _groupList:dict[int, list[str]] = {}
-
+    _studentList:dict[str, int] = field(default_factory=dict)
+    _groupList:dict[int, list[str]] = field(default_factory=dict)
+    
     def __post_init__(self):
         if self.groupPath:
             self.importGroups(inpath=self.groupPath)
