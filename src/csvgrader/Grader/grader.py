@@ -190,7 +190,7 @@ class Grader:
         """
         # Gives us wrapping 
         if self.currentStudent >= self.numStudents:
-            self.currentStudent = 0
+            self.currentStudent = -1
         self.currentStudent += 1
         # Increment
         return self.getCurrentStudent()
@@ -203,7 +203,7 @@ class Grader:
         """
         # Gives us wrapping 
         if self.currentStudent <= 0:
-            self.currentStudent = self.numStudents-1
+            self.currentStudent = self.numStudents
         # decrement
         self.currentStudent -= 1
         return self.getCurrentStudent()

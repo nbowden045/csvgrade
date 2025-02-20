@@ -197,11 +197,19 @@ class MainWindow:
         self.studentSection = StringVar(value="N/A")
         ttk.Label(iFrame, text="Section:").grid(row=2, column=0, sticky="NE")
         ttk.Label(iFrame, textvariable=self.studentSection).grid(row=2, column=1, sticky="NW")
+
+        self.studentGroup = StringVar(value="")
+        ttk.Label(iFrame, text="Group:").grid(row=3, column=0, sticky="NE")
+        ttk.Label(iFrame, textvariable=self.studentGroup).grid(row=3, column=1, sticky="NW")
         
-        ttk.Label(iFrame, text="Submission Selection").grid(row=3, column=0, sticky="ne")
+        self.groupMembers = StringVar(value="")
+        ttk.Label(iFrame, text="Group Members:").grid(row=4, column=0, sticky="NE")
+        ttk.Label(iFrame, textvariable=self.groupMembers).grid(row=5, column=0, columnspan=2, sticky="NWE")
+
+        ttk.Label(iFrame, text="Submission Selection").grid(row=6, column=0, sticky="ne")
         self.currentSelectSubmit = StringVar()
         self.selectSubmission = ttk.Combobox(iFrame, state="readonly", textvariable=self.currentSelectSubmit)
-        self.selectSubmission.grid(row=4, column=0, columnspan=2)
+        self.selectSubmission.grid(row=6, column=0, columnspan=2)
         self.selectSubmission.bind("<<ComboboxSelected>>", self.openSelectedSubmission)
 
         
@@ -324,6 +332,8 @@ class MainWindow:
         self.studentName.set(f"{self.currentStudent[2]} {self.currentStudent[3]}")
         self.studentSection.set(self.currentStudent[4])
         self.currentSubmission.set(self.currentStudent[5])
+        #self.studentGroup.set(self.groups.group(self.currentStudent[0]))
+        #self.groupMembers.set(str(self.groups.students(self.groups.group(self.currentStudent[0]))))
         self.genSubmissionCombo()
         self.openSelectedSubmission()
 
