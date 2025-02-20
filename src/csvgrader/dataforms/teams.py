@@ -47,7 +47,7 @@ class Groups:
                 raise RuntimeError("CSV File not of correct format")
             # Itterates over the list and generates the groups
             for line in reader:
-                self.addStudent(line[1], line[0])
+                self.addStudent(int(line[1]), line[0])
 
 
 
@@ -99,20 +99,27 @@ class Groups:
             students (list, optional): list of students to add to the group. Defaults to None.
             groupDict (dict, optional): dictionary of {groupID:[NetID]}. Defaults to None.
             overwrite (bool, optional): if set, If students contains a netID already assigned it will reassign to the new group. Defaults to False.
+
+        Returns:
+            int: groupID of created
         """
 
         # If not specified it will have default value 1 higher than the max. Groups are numbered sequentially
         if not groupID:
-            groupID = max(self._groupList.keys())+1
+            if len(self._groupList.keys()) == 0:
+                groupID=1
+            else:    
+                groupID = max(self._groupList.keys())+1
 
         self._groupList[groupID] = []
 
         if students:
             for s in students:
                 self.addStudent(groupID, s, overwrite=overwrite)
+        return groupID
 
     def addStudent(self, groupID:int, netID:str, overwrite:bool=False):
-        """Add student to an existing group and create the group if it doesn't already exist
+        """Add student to specified group and create the group if it doesn't already exist
 
         Args:
             groupID (int): ID of the group to add to/create 
@@ -140,6 +147,30 @@ class Groups:
         # assign group to student and vise versa 
         self._studentList[netID] = groupID
         self._groupList[groupID].append(netID)
+
+    def getGroupDict(self):
+        return self._groupList
+
+    def deleteGroup(self, gid:int):
+        """Deletes a group entry and removes all students from it
+
+        Args:
+            gid (int): group id to delete
+        """
+        for i in self._groupList[gid]:
+            self._studentList.pop(i)
+        self._groupList.pop(gid)
+    
+    def removeStudent(self, netID:str):
+        """Remove student from a group
+
+        Args:
+            netID (str): NetID of student to remove
+        """
+
+        gid = self._studentList[netID]
+        self._studentList.pop(netID)
+        self._groupList[gid].remove(netID)
         
 
 
