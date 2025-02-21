@@ -230,7 +230,7 @@ class Grader:
             customPath (str, optional): If you want to write it out . Defaults to gradebookPath.
         """
         
-        self.gradebook.to_csv(self.outPath)
+        self.gradebook.to_csv(self.outPath, index=False)
 
     def getStudentGrades(self):
         """Gets the current grade of currently selected student
