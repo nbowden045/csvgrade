@@ -189,9 +189,9 @@ class Grader:
             tuple: (netID, submissionsList, firstName, lastName, Section)
         """
         # Gives us wrapping 
-        if self.currentStudent >= self.numStudents:
-            self.currentStudent = -1
         self.currentStudent += 1
+        if self.currentStudent >= self.numStudents:
+            self.currentStudent = 0
         # Increment
         return self.getCurrentStudent()
 
@@ -201,11 +201,11 @@ class Grader:
         Returns:
             tuple: (netID, submissionsList, firstName, lastName, Section)
         """
-        # Gives us wrapping 
-        if self.currentStudent <= 0:
-            self.currentStudent = self.numStudents
         # decrement
         self.currentStudent -= 1
+        # Gives us wrapping 
+        if self.currentStudent <= 0:
+            self.currentStudent = self.numStudents-1
         return self.getCurrentStudent()
 
 
