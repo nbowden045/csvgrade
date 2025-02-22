@@ -209,10 +209,22 @@ class Grader:
         return self.getCurrentStudent()
 
 
-    def assignGradeStudent(self, netID, grade:dict):
-        #assigns a grade to a student across all categories
+    def assignGradeStudent(self, netID:str, grade:dict):
+        """Assigns grade to student, if the student has an EX this won't overwrite it
+
+        Args:
+            netID (str): Student NetID
+            grade (dict): {<rubric category>:[<grade>, <comments>]}
+        """
+        #assigns a grade to a student across all categories. If ABS or EX is entered it will leave unchanged
         #print(self.rubric)
         #print(grade)
+
+        # Ensure we don't overwrite abs or ex grades
+        for cat in self.rubric.keys():
+            cg = str(self.gradebook.loc[self.gradebook["Student NetID"] == netID,self.columnIndex[cat][0]].values[0]).upper()
+            if  cg == "EX" or cg == "ABS":
+                return
 
         for cat, grd in grade.items():
 
