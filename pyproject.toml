@@ -82,7 +82,7 @@ authors = [
 # listed.
 maintainers = [
     { name = "Dragonfire3900", email = "tangentialcubic@gmail.com" },
-    { name = "Autumn Baumann", email = "autumn.bauman@protonmail.com"}
+    { name = "Autumn Baumann", email = "autumnb5@illinois.edu"}
 ]
 
 # This field lists other packages that your project depends on to run.
@@ -92,7 +92,8 @@ maintainers = [
 # For an analysis of this field vs pip's requirements files see:
 # https://packaging.python.org/discussions/install-requires-vs-requirements/
 dependencies = [
-    "pandas"
+    "pandas",
+    "tkinter"
 ]
 
 # List additional groups of dependencies here (e.g. development

@@ -494,7 +494,7 @@ class MainWindow:
 
 
         #we are opening the groups
-        if not self.groupButton.instate(["selected"]):
+        if not self.groupButton.instate(["selected"]) and self.groupGradeBtn.instate(["selected"]):
             try:
                 self.groups.importGroups(self.groups_path.get())
             except RuntimeError as e:
