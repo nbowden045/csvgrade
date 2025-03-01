@@ -103,7 +103,7 @@ class Grader:
                     #print(split)
                     submitlist.append([split[0],int(split[1].split(".")[0]), os.path.join(self.submitPath, f,i)])
                     
-            elif os.path.isdir(os.path.join(self.submitPath,f)) and not resursive: 
+            elif os.path.isdir(os.path.join(self.submitPath,f)) and not recursive: 
                 continue
             else:
                 split = f.split("_")
