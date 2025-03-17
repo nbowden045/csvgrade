@@ -5,8 +5,8 @@ import webbrowser
 from pathlib import Path
 import json
 
-from dataforms.teams import Groups
-from Grader.grader import Grader
+from ..dataforms.teams import Groups
+from ..Grader.grader import Grader
 
 import pandas as pd
 
