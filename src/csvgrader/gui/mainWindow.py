@@ -473,7 +473,7 @@ class MainWindow:
         allowedFiles=(("Comma Seperated Value", "*.csv"), ("all files", "*.*"))
         initial = os.path.realpath(stvar.get())
         if os.path.isfile(initial):
-            initial = os.dirname(initial)
+            initial = os.path.dirname(initial)
 
         if mode == "csv":
             stvar.set(filedialog.askopenfilename(
