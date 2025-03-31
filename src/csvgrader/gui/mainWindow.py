@@ -161,7 +161,9 @@ class MainWindow:
         ttk.Label(gbFrame, text="Gradebook CSV Path").grid(row=1, column=2, sticky="NWE")
 
         ttk.Entry(gbFrame, textvariable=self.gbook_path, width=50).grid(row=2, column=1, columnspan = 4, sticky="NWE")
-        ttk.Button(gbFrame, text="Select File", command=lambda: self.getPaths(self.gbook_path)).grid(row=2, column=6, sticky=(N,W))
+        ttk.Button(gbFrame, text="Select File",
+                   command=lambda: self.getPaths(self.gbook_path, title="Select Gradebook CSV")
+        ).grid(row=2, column=6, sticky=(N,W))
         # ttk.Button(gbFrame, text="Load Gradebook", command=self.loadGradeBook).grid(row=3, column=2, columnspan=2, sticky="N")
 
         aFrame = ttk.Frame(tab)
@@ -171,7 +173,9 @@ class MainWindow:
 
         ttk.Label(aFrame, text="Assignment Directory").grid(row=1, column=2, sticky="NWE")
         ttk.Entry(aFrame, textvariable=self.submission_path, width=50).grid(row=2, column=1, columnspan = 4, sticky="NWE")
-        ttk.Button(aFrame, text="Select Directory", command=lambda: self.getPaths(self.submission_path, mode="dir")).grid(row=2, column=6, sticky=(N,W))
+        ttk.Button(aFrame, text="Select Directory",
+                   command=lambda: self.getPaths(self.submission_path, mode="dir", title="Select Assignments Directory")
+        ).grid(row=2, column=6, sticky=(N,W))
         # ttk.Button(aFrame, text="Load Submissions", command=self.loadSubmissions).grid(row=3, column=2, columnspan=2, sticky="N")
 
         grFrame = ttk.Frame(tab)
@@ -184,7 +188,10 @@ class MainWindow:
 
 
         ttk.Entry(grFrame, textvariable=self.groups_path, width=50).grid(row=2, column=1, columnspan = 4, sticky="NWE")
-        ttk.Button(grFrame, text="Select CSV File", command=lambda: self.getPaths(self.groups_path, mode="csv")).grid(row=2, column=6, sticky=(N,W))
+        ttk.Button(grFrame, text="Select CSV File",
+                   command=lambda: self.getPaths(self.groups_path, mode="csv", title="Select Groups CSV File")
+        ).grid(row=2, column=6, sticky=(N,W))
+
         # ttk.Button(grFrame, text="Load Groups", command=self.genGroups).grid(row=3, column=2, sticky="NEW")
         self.groupButton = ttk.Checkbutton(grFrame, variable=self.createGroupsBtnState)
         self.groupButton.grid(row=3, column=4, sticky="NW")
@@ -463,7 +470,7 @@ class MainWindow:
 
 
     
-    def getPaths(self, stvar:StringVar, mode:str="csv", ):
+    def getPaths(self, stvar:StringVar, mode:str="csv", title:str="Please Select ..."):
         """Get path to open a file
 
         Args:
@@ -476,18 +483,25 @@ class MainWindow:
             initial = os.path.dirname(initial)
 
         if mode == "csv":
-            stvar.set(filedialog.askopenfilename(
+            name = filedialog.askopenfilename(
                 parent=self.root,
                 filetypes=allowedFiles,
-                initialdir=initial
-            ))
+                initialdir=initial,
+                title=title,
+            )
         elif mode == "dir":
-            stvar.set(filedialog.askdirectory(
+            name = filedialog.askdirectory(
                 parent=self.root,
-                initialdir=initial
-            ))
+                initialdir=initial,
+                title=title,
+            )
 
-        self._save_memory() # when we update a path, it should be remembered.
+        # User could hit cancel on the dialog, then name is None,
+        # and we don't want to change our remembered file name.
+        if name:
+            stvar.set(name)
+            self._save_memory() # when we update a path, it should be remembered.
+
     
     def getSavePath(self):
         """Path to save output to 
