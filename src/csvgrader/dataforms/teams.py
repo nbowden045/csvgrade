@@ -40,7 +40,12 @@ class Groups:
         if not osp.isfile(inpath):
             raise RuntimeError("Invalid Path")
         
-        with open(inpath, 'r') as f:
+        # Need to use `newline=""` to avoid extra \r on windows when
+        # working with csv.reader and csv.writer, this
+        # is still cross-platform per the documentation recommendations
+        # (See: https://docs.python.org/3/library/csv.html#csv.writer,
+        # and https://stackoverflow.com/a/3191811)
+        with open(inpath, 'r', newline="") as f:
             reader = csv.reader(f)
             header = next(reader) # Extracts the header of the CSV to ensure formatting
             if header[0] != "NetID" or header[1] != "Group":
@@ -57,7 +62,12 @@ class Groups:
             outpath (str): File path to write out 
         """
 
-        with open(outpath, "w", encoding="UTF-8") as f:
+        # Need to use `newline=""` to avoid extra \r on windows when
+        # working with csv.reader and csv.writer, this
+        # is still cross-platform per the documentation recommendations
+        # (See: https://docs.python.org/3/library/csv.html#csv.writer,
+        # and https://stackoverflow.com/a/3191811)
+        with open(outpath, "w", encoding="UTF-8", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(["NetID", "Group"]) # header
             for netID, group in self._studentList.items():
