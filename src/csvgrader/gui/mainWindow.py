@@ -156,7 +156,18 @@ class MainWindow:
         self.groupGradeBtn = ttk.Checkbutton(tab, text="Grade by Group ")
         self.groupGradeBtn.grid(row=3, column=2, sticky="nw")
 
-        
+
+    def on_mousewheel_rCanvas(self, event):
+        self.rCanvas.yview_scroll(int(-1*(event.delta/120)), "units")
+
+    def enter_rubric_canvas(self, event):
+        self.mw_rCanvas_fctn = self.rFrame.bind_all("<MouseWheel>", self.on_mousewheel_rCanvas)
+
+    def exit_rubric_canvas(self, event):
+        # this may seem asymmetric with .bind_all in enter_rubric_canvas,
+        # but it works, and the function .unbind_all does not allow
+        # specifying a specific action to unbind.
+        self.rFrame.unbind("<MouseWheel>", self.mw_rCanvas_fctn)
 
     def gradeTab(self, tab):
 
@@ -166,16 +177,44 @@ class MainWindow:
         tab.grid_columnconfigure(0, weight=6)
         tab.grid_columnconfigure(1, weight=4)
         tab.grid_columnconfigure(2, weight=4)
-        tab.grid_columnconfigure(3, weight=1) 
+        tab.grid_columnconfigure(3, weight=1)
 
-        rFrame = ttk.Labelframe(tab, text="Rubric")
-        #tab.add(rFrame)
+        self.rFrame = ttk.Labelframe(tab, text="Rubric")
+        #tab.add(self.rFrame)
 
-        rFrame.grid(row=0, column=0, sticky="NSWE")
-        rFrame.grid_columnconfigure(0, weight=1)
-        rFrame.grid_columnconfigure(1, weight=2)
+        self.rFrame.grid(row=0, column=0, sticky="NSWE")
+        self.rFrame.grid_columnconfigure(0, weight=1)
+        self.rFrame.grid_columnconfigure(1, weight=2)
+
+        # create sub-canvas in the rubric column
+        # (This scrollbar solution based on Google AI overview for search "tkinter add scrollbar to frame")
+        self.rCanvas = Canvas(self.rFrame)
+        self.rCanvas.pack(side="left", fill="both", expand=True)
+
+        # Bind events to Functions to update scroll region and
+        # scrollbar when scrolling anywhere on canvas.
+        # When we enter the canvas, activate scroll binding, and deactivate on leaving.
+        # --> Solution to the scrollbar issues (scrolling anywhere
+        # moves the rubric) is to only bind_all on enter and leave
+        # events (see https://stackoverflow.com/a/51540768, https://stackoverflow.com/a/6433503)
+        self.rCanvas.bind("<Enter>", self.enter_rubric_canvas)
+        self.rCanvas.bind("<Leave>", self.exit_rubric_canvas)
         
-        self.displayRubric(rFrame)
+        # create rubric-subframe which is now scrollable
+        rSubFrame = ttk.Frame(self.rCanvas)
+        rSubFrame.bind(
+            "<Configure>", 
+            lambda event: self.rCanvas.configure(scrollregion=self.rCanvas.bbox("all"))
+        )
+        self.rCanvas.create_window((0,0), window=rSubFrame, anchor="nw")
+
+        # also create scroll bar and connect the canvas and scrollbar
+        rubric_scroll = ttk.Scrollbar(self.rFrame, orient="vertical", command=self.rCanvas.yview)
+        rubric_scroll.pack(side="right", fill="y")
+        self.rCanvas.configure(yscrollcommand=rubric_scroll.set)
+        self.rCanvas.configure(scrollregion=self.rCanvas.bbox("all"))
+
+        self.displayRubric(rSubFrame)  # display rubric is run in the sub-frame
 
         # Then display student info
         iFrame = ttk.Labelframe(tab, text="Student Info")
@@ -391,9 +430,11 @@ class MainWindow:
         """
         netID = simpledialog.askstring(parent= self.root, title=f"Add NetID to group {self._selectedGroup}", prompt="NetID: ")
         # Check if the student is in the gradebook, if not prompt for confirmation
-        if not self.grader.getStudentInfo(netID):
+        if (netID is not None) and (not self.grader.getStudentInfo(netID)):
             if not messagebox.askyesno(parent=self.root, message="NetID not in gradebook, add anyway?"):
                 return
+        elif netID is None:
+            return  # netID is None b/c user hit "cancel" no point in prompting as above.
         self.assignToGroup(groupID=self._selectedGroup[0], NetID=netID)
     
     def deleteGroup(self):
