@@ -658,8 +658,12 @@ class MainWindow:
         # First save the current values
         if self.groupGrade:
             print(f"groupGrade {self.currentStudent[0]} in group {self.groups.group(self.currentStudent[0])}")
-            for nid in self.groups.students(self.groups.group(self.currentStudent[0])):
-                self.grader.assignGradeStudent(netID=nid, grade = self.formatGrades())
+            try:
+                for nid in self.groups.students(self.groups.group(self.currentStudent[0])):
+                    self.grader.assignGradeStudent(netID=nid, grade = self.formatGrades())
+            except TypeError:
+                self.displayError("Current student not in group")
+                return
         else:
             self.grader.assignGradeStudent(netID=self.currentStudent[0], grade = self.formatGrades())
 
