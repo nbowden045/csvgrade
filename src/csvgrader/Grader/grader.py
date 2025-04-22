@@ -224,7 +224,11 @@ class Grader:
 
         # Ensure we don't overwrite abs or ex grades
         for cat in self.rubric.keys():
-            cg = str(self.gradebook.loc[self.gradebook["Student NetID"] == netID,self.columnIndex[cat][0]].values[0]).upper()
+            try:
+                cg = str(self.gradebook.loc[self.gradebook["Student NetID"] == netID,self.columnIndex[cat][0]].values[0]).upper()
+            except IndexError:
+                print(f"Student {netID} not in gradebook, skipping...")
+                return
             if  cg == "EX" or cg == "ABS":
                 return
 
