@@ -559,6 +559,13 @@ class MainWindow:
         for sel  in self.studentGrade.values():
             sel[0].set("")
             sel[1].set("")
+    
+    def resetGroups(self):
+        try:
+            self.groupTree.delete(*self.groupTree.get_children())
+            return
+        except:
+            return
 
     def getCurrentGrades(self):
         for cat in self.studentGrade.keys():
@@ -626,6 +633,15 @@ class MainWindow:
             except RuntimeError as e:
                 self.displayError(f"Error loading groups, ensure correct file selected:\n{e}")
                 return
+            # Don't overwrite groups currently in use!
+            except RuntimeWarning as e:
+                response = messagebox.askokcancel(message="Groups already loaded, unload current groups and load new?\nPress okay to continue")
+                if not response:
+                    self.displayError(f"Error loading groups, groups already loaded.\n{e}")
+                    return
+                self.resetGroups()
+                self.groups.importGroups(self.groups_path.get(), overwrite=True)
+
         # Setting groupGrade state
         print(self.groupGradeBtn.instate(["selected"]))
         self.groupGrade = bool(self.groupGradeBtn.instate(["selected"]))

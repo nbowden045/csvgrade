@@ -26,11 +26,12 @@ class Groups:
             self.importGroups(inpath=self.groupPath)
 
 
-    def importGroups(self, inpath:str):
+    def importGroups(self, inpath:str, overwrite:bool=False):
         """Imports student group assignment from 
 
         Args:
             inpath (str): filepath to read from 
+            overwrite (bool): delete current groups and overwrite with new
 
         Raises:
             RuntimeError: File doesn't exist
@@ -39,6 +40,11 @@ class Groups:
         # Ensures file exists, if not raises error
         if not osp.isfile(inpath):
             raise RuntimeError("Invalid Path")
+        
+        if len(self._groupList) != 0 and not overwrite:
+            raise RuntimeWarning("Attempting to overwrite existing groups without overwrite set")
+        elif len(self._groupList.keys()) != 0 and overwrite:
+            self.clearGroups()
         
         # Need to use `newline=""` to avoid extra \r on windows when
         # working with csv.reader and csv.writer, this
@@ -72,6 +78,12 @@ class Groups:
             writer.writerow(["NetID", "Group"]) # header
             for netID, group in self._studentList.items():
                 writer.writerow([netID, group])
+
+    def clearGroups(self):
+        """Clears all current groups
+        """
+        self._groupList = {}
+        self._studentList = {}
     
     def students(self, groupID:int):
         """Get students in a group

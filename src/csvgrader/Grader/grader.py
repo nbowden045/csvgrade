@@ -57,6 +57,17 @@ class Grader:
             self.gradebookPath = gradebookPath
         if not self.gradebookPath:
             raise RuntimeError("No path specified!")
+        
+        # Add logic so we don't get labs_graded_graded_... filepaths 
+
+        if os.path.exists(f"{self.gradebookPath[:-4]}_graded.csv"):
+            self.gradebookPath = f"{self.gradebookPath[:-4]}_graded.csv"
+            self.outPath = self.gradebookPath
+            print(self.gradebookPath)
+        else:
+            self.outPath = f"{self.gradebookPath[:-4]}_graded.csv"
+
+        
         try:
             self.gradebook = pd.read_csv(self.gradebookPath, dtype=str)
         except Exception as e:
@@ -65,7 +76,6 @@ class Grader:
         self.GenRubricItems()
         self.setRubricColumn()
 
-        self.outPath = f"{self.gradebookPath[:-4]}_graded.csv"
 
     def GenSubmitList(self, submitPath:str=None, recursive:bool = False):
         """Sorts submissions by timestamp and netID for easy indexing 
@@ -206,7 +216,7 @@ class Grader:
         # decrement
         self.currentStudent -= 1
         # Gives us wrapping 
-        if self.currentStudent <= 0:
+        if self.currentStudent < 0:
             self.currentStudent = self.numStudents-1
         return self.getCurrentStudent()
 
