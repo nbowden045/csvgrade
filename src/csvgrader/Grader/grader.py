@@ -226,7 +226,11 @@ class Grader:
 
         Args:
             netID (str): Student NetID
-            grade (dict): {<rubric category>:[<grade>, <comments>]}
+            grade (dict): {<rubric category>:[<grade>, <comments>],
+                           "Max Percentage": 1.0}
+                The grade dict can also include a Max Percentage to allow
+                marking the student late to class (80%) or late assignment
+                submission (75%).
         """
         #assigns a grade to a student across all categories. If ABS or EX is entered it will leave unchanged
         #print(self.rubric)
@@ -241,6 +245,11 @@ class Grader:
                 return
             if  cg == "EX" or cg == "ABS":
                 return
+
+        # Pop the max percent so it does not contaminate the following
+        # loop, add it to the gradebook.
+        max_percent = grade.pop("Max Percentage", 1.0)  # default is 1.0
+        self.gradebook.loc[self.gradebook["Student NetID"] == netID, "Max Percentage"] = max_percent
 
         for cat, grd in grade.items():
 
@@ -272,6 +281,9 @@ class Grader:
             grd = str(self.gradebook.loc[self.gradebook["Student NetID"] == netID,self.columnIndex[cat][0]].values[0])
             com = str(self.gradebook.loc[self.gradebook["Student NetID"] == netID,self.columnIndex[cat][1]].values[0])
             grades[cat] = [grd if grd != "nan" else "", com if com !="nan" else ""]
+
+        grades["Max Percentage"] = self.gradebook.loc[self.gradebook["Student NetID"] == netID, "Max Percentage"].values[0]
+        
         return grades
 
 

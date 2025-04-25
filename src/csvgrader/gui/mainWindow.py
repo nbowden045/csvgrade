@@ -430,8 +430,8 @@ class MainWindow:
         self.studentName.set(f"{self.currentStudent[2]} {self.currentStudent[3]}")
         self.studentSection.set(self.currentStudent[4])
         self.currentSubmission.set(self.currentStudent[5])
-        #self.studentGroup.set(self.groups.group(self.currentStudent[0]))
-        #self.groupMembers.set(str(self.groups.students(self.groups.group(self.currentStudent[0]))))
+        self.studentGroup.set(self.groups.group(self.currentStudent[0]))
+        self.groupMembers.set(str(self.groups.students(self.groups.group(self.currentStudent[0]))))
         self.genSubmissionCombo()
         self.openSelectedSubmission()
 
@@ -578,7 +578,9 @@ class MainWindow:
         Returns:
             dict: {category:[grade, comments]}
         """
-        return {str(itm):[val[0].get(), val[1].get()] for (itm, val) in self.studentGrade.items()}
+        grade = {str(itm):[val[0].get(), val[1].get()] for (itm, val) in self.studentGrade.items()}
+        grade["Max Percentage"] = 1.0
+        return grade
 
 
     def selectGroup(self, event):
